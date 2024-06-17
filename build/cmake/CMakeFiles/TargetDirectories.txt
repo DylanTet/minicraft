@@ -1,0 +1,3 @@
+/Users/dylantettemer/Desktop/projects/minicraft/build/cmake/CMakeFiles/main.dir
+/Users/dylantettemer/Desktop/projects/minicraft/build/cmake/CMakeFiles/edit_cache.dir
+/Users/dylantettemer/Desktop/projects/minicraft/build/cmake/CMakeFiles/rebuild_cache.dir
