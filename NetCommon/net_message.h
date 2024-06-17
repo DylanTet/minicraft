@@ -4,6 +4,7 @@
 #include <sys/_types/_size_t.h>
 
 #include <cstring>
+#include <ostream>
 #include <vector>
 
 #include "net_common.h"
@@ -65,6 +66,19 @@ template <typename T> struct message {
     // Cache the location towards the end of the vector where the pulled data
     // starts.
     size_t i = msg.body.size() - sizeof(DataType);
+  }
+};
+
+template <typename T> class connection;
+
+template <typename T> struct owned_message {
+  std::shared_ptr<connection<T>> remote = nullptr;
+  message<T> msg;
+
+  friend std::ostream &operator<<(std::ostream &os,
+                                  const owned_message<T> &msg) {
+    os << msg.msg;
+    return os;
   }
 };
 
