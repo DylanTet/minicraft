@@ -1,4 +1,5 @@
 #pragma once
+#include <condition_variable>
 #include <deque>
 #include <mutex>
 
@@ -7,13 +8,14 @@
 namespace olc {
 namespace net {
 
-template <typename T> class threadSafeQueue {
-public:
+template <typename T>
+class threadSafeQueue {
+ public:
   threadSafeQueue() = default;
-  threadSafeQueue(const threadSafeQueue<T> &) = default;
+  threadSafeQueue(const threadSafeQueue<T> &) = delete;
   virtual ~threadSafeQueue() { clear(); }
 
-public:
+ public:
   const T &front() {
     std::scoped_lock lock(muxQueue);
     return deqQueue.front();
@@ -28,12 +30,16 @@ public:
   void push_back(const T &item) {
     std::scoped_lock lock(muxQueue);
     deqQueue.emplace_back(std::move(item));
+    std::unique_lock<std::mutex> ul(muxBlocking);
+    cvBlocking.notify_one(ul);
   }
 
   // Adds item to the front of the queue
   void push_front(const T &item) {
     std::scoped_lock lock(muxQueue);
     deqQueue.emplace_front(std::move(item));
+    std::unique_lock<std::mutex> ul(muxBlocking);
+    cvBlocking.notify_one(ul);
   }
 
   // Returns true if the queue is empty
@@ -67,13 +73,19 @@ public:
     return t;
   }
 
-protected:
+  void wait() {
+    while (empty()) {
+      std::unique_lock<std::mutex> ul(muxBlocking);
+      cvBlocking.wait(ul);
+    }
+  }
+
+ protected:
   std::mutex muxQueue;
   std::deque<T> deqQueue;
+
+  std::condition_variable cvBlocking;
+  std::mutex muxBlocking;
 };
-
-threadSafeQueue::threadSafeQueue() {}
-
-threadSafeQueue::~threadSafeQueue() {}
-} // namespace net
-} // namespace olc
+}  // namespace net
+}  // namespace olc

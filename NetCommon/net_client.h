@@ -16,32 +16,38 @@
 namespace olc {
 namespace net {
 template <typename T> class client_interface {
+public:
   client_interface() : m_socket(m_context) {}
 
   virtual ~client_interface() { Disconnect(); }
 
-public:
   bool Connect(const std::string &host, const uint16_t port) {
     try {
-      // Make connection
-      m_connection = std::make_unique<connection<T>>(); // TODO
-
-      // REsolve hostname/ip-address into tangiable physical ip-address
+      // Resolve hostname/ip-address into a tangiable physical address.
       asio::ip::tcp::resolver resolver(m_context);
-      m_endpoint = resolver.resolve(host, std::to_string(port));
+      asio::ip::tcp::resolver::results_type endpoints =
+          resolver.resolve(host, std::to_string(port));
 
-      // Tell the connection object to connect to server
-      m_connection->ConnectToServer(m_endpoint);
+      // Make connection
+      m_connection = std::make_unique<connection<T>>(
+          connection<T>::owner::client, m_context,
+          asio::ip::tcp::socket(m_context), m_qMessagesIn);
 
-      // Start context thread
+      // Tell the connection object to connect ot server.
+      m_connection->ConnectToServer(endpoints);
+
+      // Start the context thread
       thrContext = std::thread([this]() { m_context.run(); });
 
     } catch (std::exception &e) {
       std::cerr << "Client Exception: " << e.what() << "\n";
       return false;
     }
+
     return true;
   }
+
+  void ConnectToServer() {}
 
   // Disconnect from the server
   void Disconnect() {
