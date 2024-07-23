@@ -64,7 +64,7 @@ class server_interface {
         if (OnClientConnect(newConnection)) {
           // Connection allowed, so add to container of new connections.
           m_deqConnections.push_back(std::move(newConnection));
-          m_deqConnections.back()->ConnectToClient(nIDCounter++);
+          m_deqConnections.back()->ConnectToClient(this, nIDCounter++);
           std::cout << "[" << m_deqConnections.back()->GetID()
                     << "] Connection Approved\n";
         } else {
@@ -139,6 +139,9 @@ class server_interface {
 
   virtual void OnMessage(std::shared_ptr<connection<T>> client,
                          message<T> &msg) {}
+
+ public:
+  virtual void onClientValidated(std::shared_ptr<connection<T>> client) {}
 
  protected:
   // Thread safe queue for incoming message packets
