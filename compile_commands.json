@@ -1,7 +1,7 @@
 [
 {
-  "directory": "/Users/dylantettemer/Desktop/projects/minicraft/build/cmake",
-  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -I~/Desktop/projects/minicraft/NetCommon/olc_net.h -I/Users/dylantettemer/Desktop/projects/minicraft/../../../../../opt/homebrew/include/asio.hpp -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -o CMakeFiles/main.dir/main.cpp.o -c /Users/dylantettemer/Desktop/projects/minicraft/main.cpp",
+  "directory": "/Users/dylantettemer/Desktop/projects/minicraft",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++  -I/Users/dylantettemer/Desktop/projects/minicraft/{CMAKE_SOURCE_DIR}/../../../../../opt/homebrew/include/asio.hpp -I/Users/dylantettemer/Desktop/projects/minicraft/{CMAKE_SOURCE_DIR}/../../../../../opt/homebrew/opt/ncurses/include/ncurses.h -std=gnu++17 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.0 -o CMakeFiles/main.dir/main.cpp.o -c /Users/dylantettemer/Desktop/projects/minicraft/main.cpp",
   "file": "/Users/dylantettemer/Desktop/projects/minicraft/main.cpp",
   "output": "CMakeFiles/main.dir/main.cpp.o"
 }

@@ -32,3 +32,6 @@
 *.app
 *.cache
 build/
+
+# CMake Stuffs
+CMakeFiles/

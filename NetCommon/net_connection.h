@@ -20,14 +20,13 @@ namespace net {
 
 template <typename T>
 class connection : public std::enable_shared_from_this<connection<T>> {
- public:
+public:
   enum owner { server, client };
 
   connection(owner parent, asio::io_context &asioContext,
              asio::ip::tcp::socket socket,
              threadSafeQueue<owned_message<T>> &qIn)
-      : m_asioContext(asioContext),
-        m_socket(std::move(socket)),
+      : m_asioContext(asioContext), m_socket(std::move(socket)),
         m_qMessagesIn(qIn) {
     m_nOwnerType = parent;
 
@@ -46,7 +45,7 @@ class connection : public std::enable_shared_from_this<connection<T>> {
 
   uint32_t GetID() const { return id; }
 
- public:
+public:
   void ConnectToServer(const asio::ip::tcp::resolver::results_type &endpoints) {
     // Only relevant to clients
     if (m_nOwnerType == owner::client) {
@@ -54,7 +53,7 @@ class connection : public std::enable_shared_from_this<connection<T>> {
           m_socket, endpoints,
           [this](std::error_code ec, asio::ip::tcp::endpoint endpoint) {
             if (!ec) {
-              ReadValidation();
+              readValidation();
             }
           });
     }
@@ -84,7 +83,7 @@ class connection : public std::enable_shared_from_this<connection<T>> {
     }
   }
 
- public:
+public:
   bool Send(const message<T> &msg) {
     asio::post(m_asioContext, [this, msg]() {
       bool bWritingMessage = !m_qMessagesOut.empty();
@@ -95,7 +94,7 @@ class connection : public std::enable_shared_from_this<connection<T>> {
     });
   }
 
- private:
+private:
   // ASYNC - Prime context ready to read a message header.
   void ReadHeader() {
     asio::async_read(
@@ -229,7 +228,7 @@ class connection : public std::enable_shared_from_this<connection<T>> {
                      }));
   }
 
- protected:
+protected:
   // Each connection has a unique socket to a remote
   asio::ip::tcp::socket m_socket;
 
@@ -255,5 +254,5 @@ class connection : public std::enable_shared_from_this<connection<T>> {
   uint64_t m_handshakeIn = 0;
   uint64_t m_handshakeCheck = 0;
 };
-}  // namespace net
-}  // namespace olc
+} // namespace net
+} // namespace olc
